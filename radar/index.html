@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radar Baud</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="radar.css">
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Radar Baud</h1>
+    <p id="meta" class="sub">Chargement des données…</p>
+  </div>
+  <div class="top-actions">
+    <button id="lettersBtn" class="btn">Courriers de la sélection</button> <button id="exportBtn" class="btn">Exporter la sélection (CSV)</button>
+  </div>
+</header>
+
+<section class="filters" aria-label="Filtres">
+  <label>Recherche<input id="q" type="search" placeholder="Adresse, rue, lieu-dit"></label>
+  <label>Commune<select id="commune"><option value="">Toutes</option></select></label>
+  <label>Type<select id="type"><option value="">Tous</option><option value="maison">Maison</option><option value="appartement">Appartement</option></select></label>
+  <label>DPE
+    <select id="dpe"><option value="">E, F, G</option><option value="G">G seulement</option><option value="FG">F et G</option></select>
+  </label>
+  <label>Score min <output id="scoreOut">0</output><input id="score" type="range" min="0" max="100" value="0"></label>
+  <label>Distance max <output id="distOut">40</output> km<input id="dist" type="range" min="0" max="40" value="40"></label>
+  <label>Statut
+    <select id="statut"><option value="">Tous</option></select>
+  </label>
+  <label class="check"><input id="hideRecent" type="checkbox"> Masquer les DPE de moins de 12 mois</label>
+</section>
+
+<main class="layout">
+  <section class="left">
+    <div id="map" aria-label="Carte des biens"></div>
+    <div class="count" id="count"></div>
+    <div class="tablewrap">
+      <table id="table">
+        <thead><tr>
+          <th data-sort="score">Score</th><th data-sort="adresse">Adresse</th><th data-sort="commune_nom">Commune</th>
+          <th data-sort="type">Type</th><th data-sort="surface">m²</th><th data-sort="dpe">DPE</th>
+          <th data-sort="prix">Estimation</th><th>Statut</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+  <aside class="right" id="detail"><p class="empty">Choisissez un bien dans la liste ou sur la carte.</p></aside>
+</main>
+
+<footer>
+  <p><strong>Ce que montre l'outil.</strong> Des logements dont le diagnostic énergétique est public (E, F, G) dans un rayon de 40 km de Baud. Le score est un classement de priorité d'appel, pas une prédiction de vente : voir les motifs affichés pour chaque bien. L'estimation est statistique, calculée sur les ventes réelles comparables (DVF), et ne remplace pas un avis de valeur avec visite.</p>
+  <p><strong>Données et RGPD.</strong> Aucun nom de propriétaire n'est présent. Un DPE récent peut signaler un bien déjà en vente ou en location : vérifiez avant de démarcher. Pour contacter, privilégiez le courrier « Propriétaire du bien » ou le porte-à-porte, et respectez Bloctel et les oppositions.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="radar.js"></script>
+</body>
+</html>
