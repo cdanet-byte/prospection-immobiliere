@@ -126,9 +126,9 @@
       h += '<div class="price">' + eur(e.prix_median) + '</div><div class="range">Fourchette ' + eur(e.prix_bas) + ' à ' + eur(e.prix_haut) + ' · ' + eur(e.ppm2_median) + '/m² (médiane, quartiles ' + eur(e.ppm2_q1) + ' à ' + eur(e.ppm2_q3) + ')</div>';
       h += '<div class="range">' + e.nb_comparables + ' ventes comparables sur 36 mois, périmètre : ' + esc(e.perimetre) + ' · fiabilité ' + e.fiabilite + '</div>';
       h += '<div class="warn">Estimation brute sur le prix du m² bâti. Elle ne tient compte ni du terrain, ni de l\'état, ni de l\'étiquette énergie, ni des prestations : ajustez après la visite. Les 5 ventes ci-dessous sont les plus proches en surface.</div>';
-      h += '<table class="comps"><tr><th>Date</th><th>Adresse</th><th>m²</th><th>Terrain</th><th>Prix</th><th>€/m²</th></tr>' + e.comparables.map(function (c) {
+      if (e.comparables.length) h += '<table class="comps"><tr><th>Date</th><th>Adresse</th><th>m²</th><th>Terrain</th><th>Prix</th><th>€/m²</th></tr>' + e.comparables.map(function (c) {
         return '<tr><td>' + c.date + '</td><td>' + esc(c.adresse) + '</td><td>' + c.surface + '</td><td>' + (c.terrain || '') + '</td><td>' + eur(c.prix) + '</td><td>' + eur(c.ppm2) + '</td></tr>';
-      }).join('') + '</table>';
+      }).join('') + '</table>'; else h += '<p class="range">Détail des ventes comparables disponible pour les biens de score 30 et plus.</p>';
     } else h += '<p class="range">Pas assez de ventes comparables pour estimer.</p>';
     if (b.derniere_vente) h += '<h3>Dernière vente connue</h3><p>' + b.derniere_vente.date + ' · ' + eur(b.derniere_vente.prix) + ' · ' + b.derniere_vente.surface + ' m²</p>';
     h += '<h3>Suivi</h3><div class="row"><select id="stSel"><option value="">Sans statut</option>' + STATUTS.map(function (s) { return '<option' + (sv.statut === s ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select>' +

@@ -437,6 +437,9 @@ def main():
         comps, scope = comparables(b, sales, today, communes)
         b["estimation"] = estimate(b, comps, scope)
         b["score"], b["motifs"] = score(b, today)
+    for b in biens:
+        if b["estimation"] and b["score"] < 30:
+            b["estimation"]["comparables"] = []  # allège le fichier : détail gardé pour les biens prioritaires
     biens.sort(key=lambda b: -b["score"])
 
     stats = {}
