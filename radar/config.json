@@ -1,0 +1,17 @@
+{
+  "centre": {"nom": "Baud (56150)", "lat": 47.8693, "lon": -3.0287},
+  "rayon_km": 40,
+  "departements": ["56", "22", "35", "44", "29"],
+  "dvf_years": [2021, 2022, 2023, 2024, 2025],
+  "dpe_labels": ["E", "F", "G"],
+  "score": {
+    "dpe": {"G": 30, "F": 22, "E": 8},
+    "dpe_recent_12m": 20,
+    "dpe_recent_36m": 8,
+    "vendu_moins_2_ans": -25,
+    "aucune_vente_depuis_debut_dvf": 12,
+    "grande_maison_m2": 120,
+    "grande_maison": 6,
+    "avant_1975": 6
+  }
+}
