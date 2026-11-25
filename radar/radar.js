@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  var STATUTS = ['À contacter', 'Courrier envoyé', 'Porte-à-porte fait', 'RDV estimation', 'Mandat signé', 'Pas intéressé'];
+  var STATUTS = ['À contacter', 'Courrier préparé', 'Courrier envoyé', 'Porte-à-porte fait', 'RDV estimation', 'Mandat signé', 'Pas intéressé'];
   var $ = function (id) { return document.getElementById(id); };
   var state = { biens: [], communes: null, meta: null, sort: { key: 'score', dir: -1 }, selected: null, suivi: {} };
   var map, layer, markers = {};
@@ -41,6 +41,11 @@
     $('score').addEventListener('input', function () { $('scoreOut').textContent = this.value; render(); });
     $('dist').addEventListener('input', function () { $('distOut').textContent = this.value; render(); });
     $('exportBtn').addEventListener('click', exportCsv);
+    $('lettersBtn').addEventListener('click', function () {
+      var l = current.slice(0, 100);
+      if (!l.length) return;
+      if (confirm(l.length + ' courriers (100 maximum par lot) pour la sélection actuelle. Continuer ?')) openLetters(l);
+    });
     document.querySelectorAll('th[data-sort]').forEach(function (th) {
       th.addEventListener('click', function () {
         var k = th.dataset.sort;
@@ -134,6 +139,7 @@
     h += '<h3>Suivi</h3><div class="row"><select id="stSel"><option value="">Sans statut</option>' + STATUTS.map(function (s) { return '<option' + (sv.statut === s ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select>' +
       '<textarea id="stNote" rows="3" placeholder="Notes (échange, rappel à faire…)">' + esc(sv.note || '') + '</textarea></div>';
     h += '<p class="range">Le suivi reste dans ce navigateur uniquement.</p>';
+    h += '<h3>Courrier au propriétaire</h3><div class="row"><button class="btn" id="letterBtn">Préparer le courrier</button><button class="btn" id="meBtn">Mes coordonnées</button></div>';
     if (b.lat) h += '<p><a target="_blank" rel="noopener" href="https://www.geoportail.gouv.fr/carte?c=' + b.lon + ',' + b.lat + '&z=19&l0=ORTHOIMAGERY.ORTHOPHOTOS::GEOPORTAIL:OGC:WMTS(1)&l1=CADASTRALPARCELS.PARCELLAIRE_EXPRESS::GEOPORTAIL:OGC:WMTS(1)&permalink=yes">Voir la parcelle (Géoportail, cadastre)</a></p>';
     $('detail').innerHTML = h;
     function persist() {
@@ -142,7 +148,60 @@
     }
     $('stSel').addEventListener('change', function () { persist(); render(); });
     $('stNote').addEventListener('change', persist);
+    $('letterBtn').addEventListener('click', function () { openLetters([b]); });
+    $('meBtn').addEventListener('click', editMe);
     if (markers[id] && map) markers[id].bringToFront();
+  }
+
+
+  // ---------- courrier ----------
+  function me() { return load('radar-moi', { nom: 'Christophe Danet', tel: '', email: '', ville: '' }); }
+  function editMe() {
+    var m = me();
+    var nom = prompt('Votre nom (signature)', m.nom); if (nom === null) return;
+    var tel = prompt('Votre téléphone', m.tel); if (tel === null) return;
+    var email = prompt('Votre e-mail professionnel', m.email); if (email === null) return;
+    var ville = prompt('Ville (pour la date du courrier)', m.ville); if (ville === null) return;
+    save('radar-moi', { nom: nom, tel: tel, email: email, ville: ville });
+  }
+  function letterHtml(b, m) {
+    var e = b.estimation, lieu = b.commune_nom, adr = b.adresse.replace(/ \d{5} .*$/, '');
+    var date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    var p = [];
+    p.push('<p>Madame, Monsieur,</p>');
+    p.push('<p>Je suis conseiller immobilier indépendant du réseau EFFICITY et je travaille sur votre secteur, autour de ' + esc(lieu) + '. Je me permets de vous écrire au sujet de votre bien situé ' + esc(adr) + '.</p>');
+    if (e && e.nb_comparables >= 6) {
+      p.push('<p>À titre d\'information, ' + e.nb_comparables + ' ' + (b.type === 'maison' ? 'maisons' : 'appartements') + ' de surface comparable ont été vendu' + (b.type === 'maison' ? 'es' : 's') + ' ces trois dernières années autour de ' + esc(lieu) + ', entre ' + Math.round(e.ppm2_q1).toLocaleString('fr-FR') + ' et ' + Math.round(e.ppm2_q3).toLocaleString('fr-FR') + ' € du m², avec une valeur médiane de ' + Math.round(e.ppm2_median).toLocaleString('fr-FR') + ' € du m². Ce chiffre est une moyenne de marché : seule une visite permet de situer précisément votre bien (état, terrain, prestations, exposition).</p>');
+    }
+    if (b.dpe === 'F' || b.dpe === 'G') {
+      p.push('<p>Les règles liées à la performance énergétique des logements évoluent et changent la valeur de certains biens. Je peux vous expliquer concrètement ce que cela représente pour le vôtre, que vous envisagiez de le vendre, de le louer ou de le garder.</p>');
+    }
+    p.push('<p>Si vous vous posez la question de la valeur de votre bien, je vous propose une estimation gratuite et sans engagement, avec visite, que je vous remets par écrit. Vous n\'avez aucune obligation de vendre ensuite.</p>');
+    p.push('<p>Vous pouvez me joindre' + (m.tel ? ' au <strong>' + esc(m.tel) + '</strong>' : '') + (m.tel && m.email ? ' ou' : '') + (m.email ? ' par e-mail à <strong>' + esc(m.email) + '</strong>' : '') + '.</p>');
+    p.push('<p>Dans l\'attente de votre retour, je vous prie d\'agréer, Madame, Monsieur, mes salutations distinguées.</p>');
+    p.push('<p class="sig">' + esc(m.nom) + '<br>Conseiller immobilier indépendant EFFICITY</p>');
+    p.push('<p class="rgpd">Votre adresse est issue de données publiques (diagnostics de performance énergétique et valeurs foncières). Aucun fichier de propriétaires n\'a été utilisé. Si vous ne souhaitez plus recevoir de courrier de ma part, un mot ou un e-mail suffit et votre adresse sera exclue de mes envois.</p>');
+    return '<section class="letter"><div class="dest">Au propriétaire du bien<br>' + esc(adr) + '<br>' + esc(b.cp) + ' ' + esc(lieu).toUpperCase() + '</div>' +
+      '<div class="date">' + (m.ville ? esc(m.ville) + ', le ' : 'Le ') + date + '</div>' +
+      '<p class="obj"><strong>Objet : la valeur de votre bien à ' + esc(lieu) + '</strong></p>' + p.join('') + '</section>';
+  }
+  function openLetters(list) {
+    var m = me();
+    if (!m.tel && !m.email) { alert('Renseignez d\'abord vos coordonnées (bouton « Mes coordonnées »), sinon le courrier ne contient aucun moyen de vous joindre.'); return; }
+    var w = window.open('', '_blank');
+    if (!w) { alert('Autorisez les fenêtres pop-up pour imprimer.'); return; }
+    var css = 'body{font:12pt/1.5 Georgia,serif;color:#111;margin:0}.letter{page-break-after:always;padding:22mm 22mm 16mm;min-height:250mm}' +
+      '.dest{margin:0 0 14mm 95mm;line-height:1.4}.date{text-align:right;margin-bottom:8mm}.sig{margin-top:12mm}.rgpd{font-size:8.5pt;color:#444;margin-top:14mm;border-top:1px solid #aaa;padding-top:3mm}' +
+      '@page{size:A4;margin:0}p{margin:0 0 4.5mm}';
+    w.document.write('<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Courriers</title><style>' + css + '</style></head><body>' +
+      list.map(function (b) { return letterHtml(b, m); }).join('') + '</body></html>');
+    w.document.close();
+    setTimeout(function () { w.focus(); w.print(); }, 300);
+    list.forEach(function (b) {
+      var s = state.suivi[b.id] || {};
+      if (!s.statut) { state.suivi[b.id] = { statut: 'Courrier préparé', note: s.note || '' }; }
+    });
+    save('radar-suivi', state.suivi);
   }
 
   function exportCsv() {
