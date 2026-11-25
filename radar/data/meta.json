@@ -1,0 +1,19 @@
+{
+ "genere_le": "2026-11-25",
+ "nb_biens": 22556,
+ "nb_ventes_dvf": 40718,
+ "annees_dvf": [
+  2021,
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "etiquettes_dpe": [
+  "E",
+  "F",
+  "G"
+ ],
+ "rayon_km": 40,
+ "centre": "Baud (56150)"
+}
