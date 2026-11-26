@@ -1,16 +1,19 @@
 # ImmoProspect
 
-Maquette interactive d’un logiciel de prospection immobilière.
+Outil personnel de prospection de mandats (usage individuel, sans serveur).
 
-## Fonctionnalités
+## Fonctions
 
-- Tableau de bord commercial
-- Gestion et recherche des prospects
-- Pipeline Kanban
-- Catalogue de biens
-- Tâches interactives
-- Création de prospects
+- Liste "Aujourd'hui" : prospects à relancer, classés par score de priorité
+- Sources : PAP, Leboncoin, mandats expirés, propriétaires du secteur, réseau
+- Score de priorité à règles visibles (ancienneté d'annonce, fin de mandat, urgence, avancement)
+- Alerte si un mandat précédent est encore en cours
+- Séquence de relance automatique J0, J+2, J+5, J+14
+- Pipeline par statut, de Nouveau à Mandat signé
+- Scripts de messages et d'appels pré-remplis, bouton Copier
+- Résultats par source (taux de mandat)
+- Export JSON et CSV, import JSON
 
-## Lancer
+## Utiliser
 
-Ouvrez `index.html` dans un navigateur, ou activez GitHub Pages depuis les paramètres du dépôt.
+Ouvrir `index.html` dans un navigateur. Les données restent dans le navigateur : faire un export régulier.

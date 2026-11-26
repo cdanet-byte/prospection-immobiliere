@@ -1,49 +1,69 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImmoProspect — Pilotage immobilier</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ImmoProspect, mes mandats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <aside class="sidebar"><a class="brand" href="#"><span class="brand-mark">⌂</span><span>Immo<span>Prospect</span></span></a>
-    <nav>
-      <button class="nav-item active" data-view="dashboard"><span>▦</span>Tableau de bord</button>
-      <button class="nav-item" data-view="leads"><span>◎</span>Prospects <b id="leadCountNav">24</b></button>
-      <button class="nav-item" data-view="pipeline"><span>⌁</span>Pipeline</button>
-      <button class="nav-item" data-view="properties"><span>⌂</span>Biens</button>
-      <button class="nav-item" data-view="tasks"><span>✓</span>Tâches <b id="taskCountNav">3</b></button>
+<div class="app">
+  <aside>
+    <div class="brand"><strong>ImmoProspect</strong><small>Christophe Danet · Efficity</small></div>
+    <nav id="nav">
+      <button data-tab="today" class="on">Aujourd'hui</button>
+      <button data-tab="leads">Prospects</button>
+      <button data-tab="pipeline">Pipeline</button>
+      <button data-tab="scripts">Scripts</button>
+      <button data-tab="data">Données</button>
     </nav>
-    <div class="sidebar-bottom"><button class="nav-item"><span>⚙</span>Paramètres</button><div class="profile"><div class="avatar">CD</div><div><strong>Camille Durand</strong><small>Conseillère immobilier</small></div></div></div>
   </aside>
   <main>
-    <header><div><p class="eyebrow">Lundi 24 novembre</p><h1 id="pageTitle">Bonjour Camille 👋</h1></div><div class="header-actions"><button class="icon-button">♧<i></i></button><button class="primary" id="newLeadBtn">＋ Nouveau prospect</button></div></header>
-    <section id="dashboardView" class="view active">
-      <div class="stats-grid">
-        <article class="stat-card"><div class="stat-icon green">↗</div><div><span>Nouveaux prospects</span><strong id="newProspectsStat">24</strong><small class="up">+12% <em>ce mois</em></small></div></article>
-        <article class="stat-card"><div class="stat-icon blue">◎</div><div><span>Mandats actifs</span><strong>18</strong><small class="up">+3 <em>ce mois</em></small></div></article>
-        <article class="stat-card"><div class="stat-icon orange">€</div><div><span>Valeur du pipeline</span><strong>2,4 M€</strong><small class="up">+18% <em>ce mois</em></small></div></article>
-        <article class="stat-card"><div class="stat-icon purple">✓</div><div><span>Taux de conversion</span><strong>32%</strong><small class="up">+4 pts <em>ce mois</em></small></div></article>
-      </div>
-      <div class="dashboard-grid">
-        <section class="card pipeline-card"><div class="card-header"><div><p class="eyebrow">Cette semaine</p><h2>Pipeline commercial</h2></div><button class="text-button" data-go="pipeline">Voir le pipeline →</button></div><div class="pipeline-bars">
-          <div class="bar-row"><span>Contacté</span><div class="bar-track"><div class="bar blue-bar" style="width:88%"></div></div><strong>32</strong></div><div class="bar-row"><span>Qualifié</span><div class="bar-track"><div class="bar teal-bar" style="width:61%"></div></div><strong>22</strong></div><div class="bar-row"><span>Estimation</span><div class="bar-track"><div class="bar yellow-bar" style="width:44%"></div></div><strong>16</strong></div><div class="bar-row"><span>Mandat signé</span><div class="bar-track"><div class="bar green-bar" style="width:28%"></div></div><strong>10</strong></div>
-        </div></section>
-        <section class="card activity-card"><div class="card-header"><h2>Activité récente</h2></div><div class="activity-list"><div class="activity"><div class="activity-avatar coral">JM</div><div><strong>Jean Moreau</strong><span>Prospect qualifié</span></div><time>10 min</time></div><div class="activity"><div class="activity-avatar green-bg">SL</div><div><strong>Sophie Laurent</strong><span>Rendez-vous planifié</span></div><time>32 min</time></div><div class="activity"><div class="activity-avatar blue-bg">AP</div><div><strong>Antoine Petit</strong><span>Estimation demandée</span></div><time>1 h</time></div></div></section>
-        <section class="card leads-card"><div class="card-header"><div><p class="eyebrow">À suivre aujourd’hui</p><h2>Prospects prioritaires</h2></div><button class="text-button" data-go="leads">Tous les prospects →</button></div><div class="table-wrap"><table><thead><tr><th>Prospect</th><th>Ville</th><th>Projet</th><th>Statut</th><th></th></tr></thead><tbody id="priorityTable"></tbody></table></div></section>
-        <section class="card tasks-card"><div class="card-header"><h2>Tâches du jour</h2><button class="add-task" id="addTaskBtn">＋</button></div><div id="taskList" class="task-list"></div></section>
-      </div>
-    </section>
-    <section id="leadsView" class="view"><div class="toolbar"><div class="search"><span>⌕</span><input id="leadSearch" placeholder="Rechercher un prospect..."></div><select id="statusFilter"><option value="">Tous les statuts</option><option>À rappeler</option><option>Qualifié</option><option>Estimation</option><option>Mandat signé</option></select><button class="primary" id="newLeadBtn2">＋ Nouveau prospect</button></div><div class="card list-card"><table><thead><tr><th>Prospect</th><th>Contact</th><th>Ville</th><th>Projet</th><th>Statut</th><th>Budget</th><th></th></tr></thead><tbody id="leadsTable"></tbody></table></div></section>
-    <section id="pipelineView" class="view"><div class="kanban" id="kanban"></div></section>
-    <section id="propertiesView" class="view"><div class="toolbar"><div class="search"><span>⌕</span><input placeholder="Rechercher un bien..."></div><button class="primary">＋ Ajouter un bien</button></div><div class="properties-grid"><article class="property-card"><div class="property-photo photo-one"><span>À vendre</span></div><div><p>La Madeleine · 59000</p><h3>Appartement T3 avec terrasse</h3><strong>284 000 €</strong><small>72 m² · 3 pièces · 2 chambres</small></div></article><article class="property-card"><div class="property-photo photo-two"><span>À vendre</span></div><div><p>Marcq-en-Barœul · 59700</p><h3>Maison familiale rénovée</h3><strong>465 000 €</strong><small>128 m² · 5 pièces · 4 chambres</small></div></article><article class="property-card"><div class="property-photo photo-three"><span>À louer</span></div><div><p>Vieux-Lille · 59000</p><h3>Duplex lumineux</h3><strong>1 240 € / mois</strong><small>68 m² · 3 pièces · 2 chambres</small></div></article></div></section>
-    <section id="tasksView" class="view"><div class="card full-task-card"><div class="card-header"><h2>Mes tâches</h2><button class="primary" id="addTaskBtn2">＋ Ajouter une tâche</button></div><div id="fullTaskList" class="task-list large"></div></div></section>
+    <header class="band"><h1 id="title">Aujourd'hui</h1><button id="newBtn" class="btn">+ Nouveau prospect</button></header>
+    <section id="view"></section>
   </main>
-  <div class="modal-backdrop" id="modalBackdrop"><div class="modal"><div class="modal-header"><div><p class="eyebrow">Nouvelle opportunité</p><h2>Ajouter un prospect</h2></div><button id="closeModal" class="icon-button">×</button></div><form id="leadForm"><div class="form-grid"><label>Prénom<input name="prenom" required placeholder="Ex. Marie"></label><label>Nom<input name="nom" required placeholder="Ex. Dubois"></label><label>Téléphone<input name="phone" placeholder="06 12 34 56 78"></label><label>Ville<input name="ville" placeholder="Ex. Lille"></label><label>Projet<select name="projet"><option>Achat</option><option>Vente</option><option>Location</option><option>Investissement</option></select></label><label>Budget<input name="budget" placeholder="Ex. 350 000 €"></label></div><div class="modal-actions"><button type="button" class="secondary" id="cancelModal">Annuler</button><button type="submit" class="primary">Créer le prospect</button></div></form></div></div>
-  <div id="toast" class="toast">Prospect créé avec succès</div>
-  <script src="app.js"></script>
+</div>
+
+<dialog id="dlg">
+  <form id="form">
+    <h2 id="formTitle">Nouveau prospect</h2>
+    <div class="grid">
+      <label>Prénom<input name="prenom" required></label>
+      <label>Nom<input name="nom"></label>
+      <label>Téléphone<input name="tel" inputmode="tel"></label>
+      <label>Email<input name="email" type="email"></label>
+      <label>Source
+        <select name="source">
+          <option value="pap">PAP</option>
+          <option value="lbc">Leboncoin</option>
+          <option value="expire">Mandat expiré</option>
+          <option value="secteur">Propriétaire du secteur</option>
+          <option value="reseau">Réseau</option>
+        </select>
+      </label>
+      <label>Statut<select name="statut" id="statutSel"></select></label>
+      <label>Adresse ou rue<input name="rue"></label>
+      <label>Commune<input name="commune"></label>
+      <label>Type de bien<input name="type" placeholder="maison, appartement..."></label>
+      <label>Surface (m²)<input name="surface" type="number" min="0" step="1"></label>
+      <label>Prix demandé (€)<input name="prix" type="number" min="0" step="1000"></label>
+      <label>Annonce en ligne depuis le<input name="dateAnnonce" type="date"></label>
+      <label>Fin du mandat précédent<input name="finMandat" type="date"></label>
+      <label>Prochaine relance<input name="nextAction" type="date"></label>
+    </div>
+    <label class="check"><input type="checkbox" name="urgent"> Vente urgente (mutation, succession, divorce, achat en cours)</label>
+    <label>Notes<textarea name="notes" rows="3"></textarea></label>
+    <div class="actions">
+      <button type="button" class="btn ghost danger" id="delBtn">Supprimer</button>
+      <span class="grow"></span>
+      <button type="button" class="btn ghost" id="cancelBtn">Annuler</button>
+      <button type="submit" class="btn">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+<div id="toast"></div>
+<script src="app.js"></script>
 </body>
 </html>
